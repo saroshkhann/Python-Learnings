@@ -3,6 +3,7 @@ import random
 EASY_LEVEL_TURNS = 10
 HARD_LEVEL_TURNS = 5
 
+
 def check_answer(user_guess, actual_number, turns):
     """Checks answer against guess, returns the number of turns remaining"""
     if user_guess > actual_number:
@@ -25,22 +26,33 @@ def generate_number():
     return random.randint(1,100)
 
 def game():
-    answer = generate_number()
-    print("Welcome to the Number Guessing Game!")
-    print("I'm thinking of a number between 1 and 100.")
+    score = 0
+    playAgain = True
 
-    turns = set_difficulty()
+    while playAgain:
+        answer = generate_number()
+        print("Welcome to the Number Guessing Game!")
+        print("I'm thinking of a number between 1 and 100.")
 
-    guess = 0
-    while guess != answer:
-        print(f"You have {turns} attempts remaining to guess the number")
-        guess = int(input("Make a guess: "))
-        turns = check_answer(guess, answer, turns)
-        if turns == 0:
-            print("You've run out of guesses, you lose.")
+        turns = set_difficulty()
+
+        guess = 0
+        while guess != answer:
+            print(f"You have {turns} attempts remaining to guess the number")
+            guess = int(input("Make a guess: "))
+            turns = check_answer(guess, answer, turns)
+            if turns == 0:
+                print("You've run out of guesses, you lose.")
+                return
+            elif guess != answer:
+                print("Guess Again!")
+
+        log = input("Do you want to play again? Y or N")
+        if log == "y":
+            print("\n" * 20)
+        if log == "n":
             return
-        elif guess != answer:
-            print("Guess Again!")
+
 
 
 
