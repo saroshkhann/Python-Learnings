@@ -13,6 +13,7 @@ class User:
 user_1 = User("001", "Sarosh")
 user_2 = User("002", "Jack")
 user_3 = User("003", "Abdulllah")
+user_4 = User("003", "Abdulllah")
 
 user_3.follow(user_1)
 
