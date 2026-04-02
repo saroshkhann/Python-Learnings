@@ -64,14 +64,18 @@ class Student:
                 found = True
                 print(f"Name: {student['name']}")
                 print(f"Courses: ")
-                index = 0
+                # index = 0
 
                 if len(student["courses"]) == 0 :
                     print("No courses added yet! ")
                 else:
-                    while index != len(student["courses"]):
-                        print(f"{student["courses"][index]["course"]} - {student["courses"][index]["marks"]}")
-                        index+=1
+                    # while index != len(student["courses"]):
+                    #     print(f"{student["courses"][index]["course"]} - {student["courses"][index]["marks"]}")
+                    #     index+=1
+
+                    for course in student["courses"]:
+                        print(f"{course["course"]} - {course["marks"]}")
+
                 total = 0
                 count = 0
                 for course in student["courses"]:
