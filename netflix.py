@@ -2,7 +2,7 @@ class Netflix:
     def __init__(self):
         self.users = []
         self.movie = []
-        self.watch_moviee = []
+        self.genre_count = []
 
     def menu(self):
         print("1. Register User")
@@ -21,8 +21,9 @@ class Netflix:
                 return
 
 
-        self.users.append({"username": username, "movies": []})
+        self.users.append({"username": username, "movies": [], "genre": '', "genre_count": 0})
         print(f"User '{username}' registered successfully.")
+        print(self.users)
 
     def add_movie(self):
         title = input("Enter movie title: ")
@@ -48,6 +49,9 @@ class Netflix:
                     item["movies"].append(title)
                     print(self.users)
                     print(f"{username} is watching '{title}'")
+                    print(self.users)
+                    item["genre_count"] +=1
+                    print(self.users)
 
         if not found:
             print("Movie not found.")
@@ -57,12 +61,21 @@ class Netflix:
         username = input("Enter username: ")
 
         counter = 1
-        index = 0
+        found = False
         for movie in self.users:
             if movie["username"] == username:
+                if len(movie["movies"]) == 0:
+                    print("No watch history found")
+                found= True
                 for m in movie["movies"]:
+
                     print(f"{counter}. {m}")
                     counter+=1
+        if not found:
+            print("user not found.")
+
+    # def recommendations(self):
+
 
 
 user = Netflix()
