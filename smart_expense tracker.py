@@ -1,7 +1,12 @@
 from datetime import datetime
+import requests
+import smtplib
+
 class ExpenseTracker:
     def __init__(self):
         self.users= {}
+        self.MY_EMAIL = "ksarosh137@gmail.com"
+        self.MY_PASSWORD = "uhjqjsimetltfurm"
 
     def get_username(self):
         username = input("Enter username: ")
@@ -18,7 +23,6 @@ class ExpenseTracker:
             }
 
             print(f"User '{username}' registered successfully!")
-            print(self.users)
 
         except ValueError as e:
             print(f"Error: {e}")
@@ -35,7 +39,6 @@ class ExpenseTracker:
             print("Budget set successfully!")
             print(f"User: {username}")
             print(f"Budget: {m_budget}")
-            print(self.users)
 
         except ValueError as e:
             print(f"Error: {e}")
@@ -50,7 +53,7 @@ class ExpenseTracker:
 
             user["expenses"].append({"category": category, "amount": amount, "date":f"{date}"})
             print("Expense added successfully!")
-            print(self.users)
+
 
         except ValueError as e:
             print(f"Error: {e}")
@@ -134,21 +137,124 @@ class ExpenseTracker:
             print("Daily Average Spending:")
             print(f"{int(total_expense/ 30)} PKR/day")
 
-
         except ValueError as e:
             print(f"Error: {e}")
 
 
+    def currency_conversion(self, username, rupees):
+        try:
+            if username not in self.users:
+                raise ValueError("User does not exists")
+
+            total_expense = 0
+            user = self.users[username]
+            expenses = user["expenses"]
+
+            if len(expenses) == 0:
+                print("No expenses to analyze")
+                return
+
+            for expense in expenses:
+                total_expense += expense["amount"]
+
+            print("Fetching live exchange rate...")
+            print(f"Total Spending: {total_expense} PKR")
+            print(f"= {int(total_expense/rupees)} USD (Live)")
+
+            print("Conversion successful!")
+        except ValueError as e:
+            print(f"Error: {e}")
+
+    def send_email(self, username, receiver):
+        try:
+            if username not in self.users:
+                raise ValueError("User does not exist")
+
+            print("📧 Preparing expense report...")
+
+            user = self.users[username]
+            expenses = user["expenses"]
+            budget = user["budget"]
+
+            if len(expenses) == 0:
+                print("No expenses found!")
+                return
+
+            # TOTAL
+            total = sum(item["amount"] for item in expenses)
+
+            # CATEGORY BREAKDOWN
+            category_dict = {}
+            for item in expenses:
+                cat = item["category"]
+                category_dict[cat] = category_dict.get(cat, 0) + item["amount"]
+
+            category_text = ""
+            for cat, amt in category_dict.items():
+                category_text += f"- {cat}: {amt} PKR\n"
+
+            # TOP CATEGORY
+            top_category = max(category_dict, key=category_dict.get)
+            top_text = f"{top_category} ({category_dict[top_category]} PKR)"
+
+            # REMAINING
+            remaining = budget - total
+
+            # DAILY AVG
+            daily_avg = int(total / 30)
+
+            # REPORT
+            report = f"""
+    Hello {username},
+
+     Total Spending: {total} PKR
+     Budget: {budget} PKR
+    Remaining Budget: {remaining} PKR
+
+     Category Breakdown:
+    {category_text}
+
+     Most Spent Category:
+    {top_text}
+
+     Daily Average Spending:
+    {daily_avg} PKR/day
+
+    --------------------------------
+    Smart Expense Analyzer 
+    """
+
+            print("📧 Sending email...")
+
+            with smtplib.SMTP("smtp.gmail.com", 587) as connection:
+                connection.starttls()
+                connection.login(self.MY_EMAIL, self.MY_PASSWORD)
+                connection.sendmail(
+                    from_addr=self.MY_EMAIL,
+                    to_addrs=receiver,
+                    msg=f"Subject: Expense Report \n\n{report}"
+                )
+
+            print("✅ Email sent successfully!")
+
+        except Exception as e:
+            print(f"Error: {e}")
+
 
 system = ExpenseTracker()
 
-while True:
+is_on = True
+
+while is_on:
     print("--------SMART EXPENSE ANALYZER--------")
     print("1. Register User")
     print("2. Set Monthly Budget")
     print("3. Add Expense")
     print("4. View Expense")
     print("5. Expense Analytics")
+    print("6. Currency Conversion")
+    print("7. Send Email Report")
+    print("8. Exit")
 
     try:
         choice = int(input("Enter choice"))
@@ -174,6 +280,24 @@ while True:
         elif choice == 5:
             username = system.get_username()
             system.expense_analytics(username)
+
+        elif choice == 6:
+            url = 'https://v6.exchangerate-api.com/v6/6bab87baa3bd85ee1248eb1b/latest/USD'
+            response  = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+            PKR = data["conversion_rates"]["PKR"]
+            username = system.get_username()
+            system.currency_conversion(username, PKR)
+
+        elif choice == 7:
+            username = system.get_username()
+            receiver_email = input("Enter email: ")
+            system.send_email(username, receiver_email)
+
+        elif choice == 8:
+            print("Exiting...")
+            is_on= False
 
     except:
         print("Please enter choice in Digits")
