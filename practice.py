@@ -1,11 +1,10 @@
-grater_value = 0
+numbers = [1,2,3,4,5,6,7, 8, 9]
 
-values = [1200,1300, 1400,600, 650,]
+reversed_list = numbers.reverse()
 
-for value in values:
-    if value > grater_value:
-        grater_value = value
-    else:
-        grater_value =
+print(numbers)
 
-print(grater_value)
+import random
+
+numb = random.choice(numbers)
+print(numb)

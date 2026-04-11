@@ -47,3 +47,5 @@ while True:
 
 df = pd.DataFrame(stored_data)
 df.to_csv("books_scrape.csv", index = False)
+
+print(df.head())
