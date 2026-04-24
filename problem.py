@@ -6,5 +6,7 @@ for num in nums:
         print("Hello")
     elif num==5:
         print("World")
+    elif num==7:
+        print("world")
 else:
     print("Hello world")
