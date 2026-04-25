@@ -8,5 +8,7 @@ for num in nums:
         print("World")
     elif num==7:
         print("world")
+    elif num==8:
+        print("hello")
 else:
     print("Hello world")
